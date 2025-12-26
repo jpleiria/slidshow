@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slideshow de Sites</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        #loader {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            font-family: sans-serif;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">A carregar...</div>
+    <iframe id="slideshow-frame" src=""></iframe>
+
+    <script>
+        let sites = [];
+        let indiceAtual = 0;
+        const frame = document.getElementById('slideshow-frame');
+        const loader = document.getElementById('loader');
+
+        // Função para carregar os sites do ficheiro JSON
+        async function carregarConfiguracao() {
+            try {
+                const resposta = await fetch('sites.json');
+                sites = await reply.json();
+                iniciarSlideshow();
+            } catch (erro) {
+                console.error("Erro ao carregar sites.json:", erro);
+                loader.innerText = "Erro ao carregar sites.json";
+            }
+        }
+
+        function iniciarSlideshow() {
+            if (sites.length === 0) return;
+            mostrarProximo();
+        }
+
+        function mostrarProximo() {
+            const site = sites[indiceAtual];
+            
+            // Atualiza o iframe
+            frame.src = site.url;
+            loader.innerText = `A mostrar: ${site.url}`;
+
+            // Define o tempo de espera (segundos * 1000 = milissegundos)
+            setTimeout(() => {
+                indiceAtual = (indiceAtual + 1) % sites.length;
+                mostrarProximo();
+            }, site.duracao * 1000);
+        }
+
+        // Inicia o processo
+        carregarConfiguracao();
+    </script>
+</body>
+</html>
